@@ -1,0 +1,47 @@
+name: Unit Tests CI
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.MD' ]
+  pull_request:
+    branches: [ master ]
+    paths-ignore: [ '**.md', '**.MD' ]
+  workflow_dispatch:
+
+env:
+  CI: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Cache gradle, wrapper and buildSrc
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-${{ github.job }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ github.job }}-
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run Android Debug Unit Test
+        run: ./gradlew jacocoTestReportDebug --warning-mode all --stacktrace
+
+      - name: Run Java/Kotlin Unit Test
+        run: ./gradlew jacocoTestReport --warning-mode all --stacktrace
+
+      - name: Upload Test Report
+        uses: codecov/codecov-action@v3.1.0
