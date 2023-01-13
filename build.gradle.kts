@@ -13,7 +13,7 @@ buildscript {
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
   }
   dependencies {
-    classpath("com.android.tools.build:gradle:7.2.1")
+    classpath("com.android.tools.build:gradle:7.4.0")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     classpath("com.diffplug.spotless:spotless-plugin-gradle:6.7.2")
     classpath("dev.ahmedmourad.nocopy:nocopy-gradle-plugin:1.4.0")
